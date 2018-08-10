@@ -1,0 +1,96 @@
+<html>
+<head>
+  <title>graph test</title>
+</head>
+<body>
+  <div id="temp" tyle="float:left;"></div>
+  <div id="graph_temp" class="epoch" style="height: 120px;"></div>
+
+  <div id="accel" tyle="float:left;"></div>
+  <div id="graph_accel" class="epoch" style="height: 140px;"></div>
+
+  <div id="gyro" tyle="float:left;"></div>
+  <div id="graph_gyro" class="epoch" style="height: 140px;"></div>
+
+  <div id="mag" tyle="float:left;"></div>
+  <div id="graph_mag" class="epoch" style="height: 140px;"></div>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/epoch.min.js') }}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/epoch.min.css') }}">
+  <script type="text/javascript">
+
+  var ticks = { time: 10, right: 5, left: 5 };
+  var windowSize = 30;
+  var historySize = 240;
+  var queueSize = 120;
+  var data = [
+      { label: "Series 1", values: [] },
+      { label: "Series 2", values: [] },
+      { label: "Series 3", values: [] },
+    ];
+
+  var lineChart_temp = 
+    $('#graph_temp').epoch({
+      type: 'time.bar',
+      ticks: ticks,
+      windowSize: windowSize,
+      historySize: historySize,
+      queueSize: queueSize,
+      data: [{ label: "Series 1", values: [] }],
+      axes: ['left', 'right', 'bottom']
+    });
+  var lineChart_accel = 
+    $('#graph_accel').epoch({
+      type: 'time.line',
+      ticks: ticks,
+      windowSize: windowSize,
+      historySize: historySize,
+      queueSize: queueSize,
+      data: data,
+      axes: ['left', 'right', 'bottom']
+    });
+  var lineChart_gyro = 
+    $('#graph_gyro').epoch({
+      type: 'time.line',
+      ticks: ticks,
+      windowSize: windowSize,
+      historySize: historySize,
+      queueSize: queueSize,
+      data: data,
+      axes: ['left', 'right', 'bottom']
+    });
+  var lineChart_mag = 
+    $('#graph_mag').epoch({
+      type: 'time.line',
+      ticks: ticks,
+      windowSize: windowSize,
+      historySize: historySize,
+      queueSize: queueSize,
+      data: data,
+      axes: ['left', 'right', 'bottom']
+    });
+
+  var ws = new WebSocket("ws://10.0.0.51:8000/public");
+  ws.onmessage = function(msg) {
+    var current = JSON.parse(msg.data);
+    document.getElementById("temp").innerHTML = "Temp: " + current[0][0].y;
+    document.getElementById("accel").innerHTML = "Accel: " + current[1][0].y + ", "
+                                                           + current[1][1].y + ", "
+                                                           + current[1][2].y ;
+    document.getElementById("gyro").innerHTML = "Gyro: " + current[2][0].y+ ", "
+                                                         + current[2][1].y + ", "
+                                                         + current[2][2].y ;
+    document.getElementById("mag").innerHTML = "Mag: " + current[3][0].y+ ", "
+                                                       + current[3][1].y + ", "
+                                                       + current[3][2].y ;
+    lineChart_temp.push(current[0]);
+    lineChart_accel.push(current[1]);
+    lineChart_gyro.push(current[2]);
+    lineChart_mag.push(current[3]);
+  };
+  </script>
+
+</body>
+</html>
