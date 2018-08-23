@@ -4,7 +4,6 @@ import sqlite3
 from contextlib import closing
 import time
 import random
-import datetime
 
 
 dbname = 'database.db'
@@ -27,7 +26,7 @@ while True:
                                      mag_y,
                                      mag_z) values (?,?,?,?,?,?,?,?,?,?,?,?)'''
         sensor = (i,
-                  int(time.mktime(datetime.datetime.now().timetuple())),
+                  int(time.time()),
                   int(random.random() * 1000),
                   random.random() * 1000,
                   random.random() * 1000,

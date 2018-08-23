@@ -4,8 +4,6 @@ import sqlite3
 from contextlib import closing
 import time
 import FaBo9Axis_MPU9250
-import random
-import datetime
 
 
 mpu9250 = FaBo9Axis_MPU9250.MPU9250()
@@ -35,7 +33,7 @@ while True:
                                      mag_y,
                                      mag_z) values (?,?,?,?,?,?,?,?,?,?,?,?)'''
         sensor = (i,
-                  int(time.mktime(datetime.datetime.now().timetuple())),
+                  int(time.time()),
                   int(temp),
                   accel['x'],
                   accel['y'],
